@@ -10,8 +10,12 @@ document.addEventListener("DOMContentLoaded", async(event) => {
 
     // Afficher les travaux et les filtres
     DisplayWorks(allWorks);
+    DisplayGalerieModale()
+
    // DisplayWorksModal()
     DisplayCategoriesFilters(allCategories, allWorks);
+
+    isConnected();
 }
 );
 
