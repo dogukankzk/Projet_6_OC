@@ -7,15 +7,17 @@ document.addEventListener("DOMContentLoaded", async(event) => {
     // Récupérer les travaux et les catégories une seule fois
     allWorks = await GetWorks();
     allCategories = await GetCategories();
-
     // Afficher les travaux et les filtres
     DisplayWorks(allWorks);
     DisplayGalerieModale()
-
    // DisplayWorksModal()
     DisplayCategoriesFilters(allCategories, allWorks);
-
     isConnected();
+    DisplayAddModale()
+    PrevisualisationImage()
+    DisplayCategoriesModale()
+    AjoutProjet();
+
 }
 );
 

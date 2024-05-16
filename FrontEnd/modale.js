@@ -11,7 +11,7 @@ modifier.addEventListener("click", () => {
 });
 
 // quitter la modale lors du clic sur la croix 
-xMark.addEventListener("click", () => {
+/*xMark.addEventListener("click", () => {
     console.log("quitter");
     ContainerModale.style.display = "none";
 });
@@ -22,9 +22,9 @@ ContainerModale.addEventListener("click", (e) => {
     if (e.target.className === "container_modale") {
         ContainerModale.style.display = "none";
     }
-});
+});*/
 
-// affichage des travaux dans la modale
+// Affichage des travaux dans la modale
 async function DisplayGalerieModale() {
     galerie_modale.innerHTML = "";
     const galerie = await GetWorks();
@@ -36,11 +36,11 @@ async function DisplayGalerieModale() {
         trash.classList.add("fa-regular", "fa-trash-can");
 
         trash.id = projet.id;
-        // ajouter un event listener sur trash
+        // Ajouter un event listener sur trash
         trash.addEventListener("click", () => {
             console.log("poubelle");
-            // appeler la fonction DeleteWorks avec l'ID du projet
-            DeleteWorks(trash.id); // Passer l'ID du projet
+            // Appeler la fonction DeleteWorks avec l'ID du projet
+            DeleteWorks(projet.id); // Passer l'ID du projet
         });
 
         img.src = projet.imageUrl;
@@ -52,11 +52,20 @@ async function DisplayGalerieModale() {
 }
 
 
-
+// Suppression d'une image dans la modale
 function DeleteWorks(idProjet) {
     console.log("Suppression du projet avec l'ID:", idProjet);
-    let token = localStorage.getItem("token");
-    console.log("Token d'authentification:", token); // Ajout du console.log ici
+    
+    // Récupérer le token JWT depuis localStorage
+    const token = localStorage.getItem("token");
+    
+    // Vérifier si le token JWT est présent
+    if (!token) {
+        console.error("Token JWT non trouvé dans localStorage.");
+        return;
+    }
+    
+    // Effectuer la requête DELETE avec le token JWT inclus dans l'en-tête
     fetch(`http://localhost:5678/api/works/${idProjet}`, {
         method: "DELETE",
         headers: {
@@ -65,12 +74,12 @@ function DeleteWorks(idProjet) {
     })
     .then((response) => {
         if (!response.ok) {
-            throw new Error("Échec de la suppression");
+            throw new Error("Échec de la suppression. Statut de la réponse: " + response.status);
         }
 
         if (response.status === 204) {
             console.log("Projet supprimé avec succès");
-            // Supprimer l'élément de la galerie modale
+            // Supprimer l'élément du DOM correspondant au projet supprimé
             const elementASupprimer = document.getElementById(idProjet);
             if (elementASupprimer) {
                 elementASupprimer.parentNode.removeChild(elementASupprimer);
@@ -101,4 +110,77 @@ function DisplayAddModale(){
     })
 }
 
-DisplayAddModale()
+// faire la prévisualisation de l'image
+const previewImg = document.querySelector(".container_file img")
+const inputFile = document.querySelector(".container_file input")
+const labelFile = document.querySelector(".container_file label")
+const iconFile = document.querySelector(".container_file .fa-image")
+const pFile = document.querySelector(".container_file p")
+
+function PrevisualisationImage(){
+    inputFile.addEventListener("change", ()=>{
+        const file = inputFile.files[0]
+        console.log(file)
+        if (file){
+            const reader = new FileReader()
+            reader.onload = function (e){
+                previewImg.src = e.target.result
+                previewImg.src = e.target.result
+                previewImg.style.display = "flex"
+                labelFile.style.display = "none"
+                iconFile.style.display = "none"
+                pFile.style.display = "none"
+            }
+            reader.readAsDataURL(file)
+        }
+    })
+}
+
+// selection de la catégorie dans la modale 
+async function DisplayCategoriesModale(){
+    const select = document.querySelector(".add_projet_modale select")
+    const categorys = await GetCategories()
+    categorys.forEach(category =>{
+        const option = document.createElement("option")
+        option.value = category.id
+        option.textContent = category.name
+        select.appendChild(option)
+    })
+}
+
+// faire un POST pour ajouter un projet
+const form = document.querySelector(".add_projet_modale form");
+const title = document.querySelector(".add_projet_modale #title");
+const category = document.querySelector(".add_projet_modale #category");
+
+async function AjoutProjet() {
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // Créer un objet FormData pour envoyer les données
+        const formData = new FormData();
+        formData.append("title", title.value);
+        formData.append("categoryId", category.value);
+        formData.append("category", category.options[category.selectedIndex].textContent);
+        formData.append("image", inputFile.files[0]); // inputFile est l'élément <input type="file">
+
+        // Effectuer la requête POST
+        fetch("http://localhost:5678/api/works", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Erreur lors de l'envoi des données. Statut de la réponse: " + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Projet ajouté avec succès :", data);
+            DisplayGalerieModale();
+            DisplayWorks();
+        })
+        .catch(error => console.error("Erreur lors de l'ajout du projet :", error));
+    });
+}
+

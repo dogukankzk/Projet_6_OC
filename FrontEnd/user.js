@@ -6,7 +6,7 @@ function isConnected() {
     const filters = document.querySelectorAll(".filter-container");
 
     // Vérifiez si l'utilisateur est connecté au chargement de la page
-    if (sessionStorage.getItem("token") !== null) {
+    if (localStorage.getItem("token") !== null) {
         // Si l'utilisateur est connecté, changez le texte du lien de connexion en "logout"
         loginLink.textContent = "logout";
         // Ajoutez un gestionnaire d'événements au lien de connexion pour gérer la déconnexion
@@ -52,8 +52,9 @@ async function loginUser(email, password) {
 async function login() {
     try {
         const user = await loginUser(emailInput.value, passwordInput.value);
-        sessionStorage.setItem("token", user.token);
-        sessionStorage.setItem("userId", user.userId);
+        console.log(user);
+        localStorage.setItem("token", user.token);
+        localStorage.setItem("userId", user.userId);
         window.location.replace("index.html");
     } catch (error) {
         messageErreur.textContent = "Email ou mot de passe incorrect";
@@ -61,9 +62,9 @@ async function login() {
 }
 
 function disconnected() {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("userId");
-    window.location.href = "login.html"; // Redirigez l'utilisateur vers la page de connexion après la déconnexion
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    window.href = "login.html"; // Redirigez l'utilisateur vers la page de connexion après la déconnexion
 }
 
 
