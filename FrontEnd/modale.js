@@ -11,7 +11,7 @@ modifier.addEventListener("click", () => {
 });
 
 // quitter la modale lors du clic sur la croix 
-/*xMark.addEventListener("click", () => {
+xMark.addEventListener("click", () => {
     console.log("quitter");
     ContainerModale.style.display = "none";
 });
@@ -22,7 +22,7 @@ ContainerModale.addEventListener("click", (e) => {
     if (e.target.className === "container_modale") {
         ContainerModale.style.display = "none";
     }
-});*/
+});
 
 // Affichage des travaux dans la modale
 async function DisplayGalerieModale() {
@@ -37,10 +37,11 @@ async function DisplayGalerieModale() {
 
         trash.id = projet.id;
         // Ajouter un event listener sur trash
-        trash.addEventListener("click", () => {
+        trash.addEventListener("click", async () => {
             console.log("poubelle");
             // Appeler la fonction DeleteWorks avec l'ID du projet
-            DeleteWorks(projet.id); // Passer l'ID du projet
+            await DeleteWorks(projet.id); // Passer l'ID du projet
+            await DisplayGalerieModale(); // Réafficher la galerie modale après suppression
         });
 
         img.src = projet.imageUrl;
@@ -51,13 +52,12 @@ async function DisplayGalerieModale() {
     });
 }
 
-
 // Suppression d'une image dans la modale
-function DeleteWorks(idProjet) {
+async function DeleteWorks(idProjet) {
+    const token = localStorage.getItem("token");
     console.log("Suppression du projet avec l'ID:", idProjet);
     
     // Récupérer le token JWT depuis localStorage
-    const token = localStorage.getItem("token");
     
     // Vérifier si le token JWT est présent
     if (!token) {
@@ -66,13 +66,14 @@ function DeleteWorks(idProjet) {
     }
     
     // Effectuer la requête DELETE avec le token JWT inclus dans l'en-tête
-    fetch(`http://localhost:5678/api/works/${idProjet}`, {
-        method: "DELETE",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    })
-    .then((response) => {
+    try {
+        const response = await fetch(`http://localhost:5678/api/works/${idProjet}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        
         if (!response.ok) {
             throw new Error("Échec de la suppression. Statut de la réponse: " + response.status);
         }
@@ -85,8 +86,9 @@ function DeleteWorks(idProjet) {
                 elementASupprimer.parentNode.removeChild(elementASupprimer);
             }
         }
-    })
-    .catch((error) => console.error("Erreur de suppression:", error));
+    } catch (error) {
+        console.error("Erreur de suppression:", error);
+    }
 }
 
 // affichage de la modale de l'ajout des projets lors du click
@@ -125,7 +127,6 @@ function PrevisualisationImage(){
             const reader = new FileReader()
             reader.onload = function (e){
                 previewImg.src = e.target.result
-                previewImg.src = e.target.result
                 previewImg.style.display = "flex"
                 labelFile.style.display = "none"
                 iconFile.style.display = "none"
@@ -148,39 +149,48 @@ async function DisplayCategoriesModale(){
     })
 }
 
-// faire un POST pour ajouter un projet
+// méthode POST
 const form = document.querySelector(".add_projet_modale form");
 const title = document.querySelector(".add_projet_modale #title");
 const category = document.querySelector(".add_projet_modale #category");
+const add_input = document.querySelector(".add_projet_modale input[type='file']");
 
 async function AjoutProjet() {
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        // Récupérer le token JWT depuis localStorage
+        const token = localStorage.getItem("token");
+
         // Créer un objet FormData pour envoyer les données
         const formData = new FormData();
         formData.append("title", title.value);
-        formData.append("categoryId", category.value);
-        formData.append("category", category.options[category.selectedIndex].textContent);
-        formData.append("image", inputFile.files[0]); // inputFile est l'élément <input type="file">
+        formData.append("category", category.value);
+        formData.append("image", add_input.files[0]); // inputFile est l'élément <input type="file">
 
-        // Effectuer la requête POST
-        fetch("http://localhost:5678/api/works", {
-            method: "POST",
-            body: formData,
-        })
-        .then(response => {
+        // Effectuer la requête POST avec le token JWT inclus dans l'en-tête
+        try {
+            const response = await fetch("http://localhost:5678/api/works", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
             if (!response.ok) {
                 throw new Error("Erreur lors de l'envoi des données. Statut de la réponse: " + response.status);
             }
-            return response.json();
-        })
-        .then(data => {
+
+            const data = await response.json();
             console.log("Projet ajouté avec succès :", data);
-            DisplayGalerieModale();
+            await DisplayGalerieModale(); // Réafficher la galerie modale après ajout
             DisplayWorks();
-        })
-        .catch(error => console.error("Erreur lors de l'ajout du projet :", error));
+        } catch (error) {
+            console.error("Erreur lors de l'ajout du projet :", error);
+        }
     });
 }
+
+// Appeler les fonctions initiales
 

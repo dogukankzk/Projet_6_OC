@@ -152,6 +152,8 @@ li:hover {
 
 .gallery img {
 	width: 100%;
+    height: 100%;
+    object-fit: cover;
 	
 }
 
@@ -332,6 +334,7 @@ footer nav ul {
 .galerie_modale figure img {
     width: 85px; /* Pour que l'image remplisse complètement son conteneur */
     height: 120px; /* Pour conserver le rapport hauteur-largeur de l'image */
+	object-fit: cover;
 }
 
 .fa-trash-can {

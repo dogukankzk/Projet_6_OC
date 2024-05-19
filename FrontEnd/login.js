@@ -6,8 +6,8 @@ const baseApiUrl = "http://localhost:5678/api/";
 
 
 // Événement de soumission du formulaire de connexion
-form.addEventListener("#btnConnect", async (e) => {
-    e.preventDefault();
+form.addEventListener("submit", async (e) => {
+e.preventDefault();
     await login();
 });
 
