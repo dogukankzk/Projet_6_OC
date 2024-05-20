@@ -11,11 +11,11 @@ document.addEventListener("DOMContentLoaded", async(event) => {
     DisplayWorks(allWorks);
     DisplayGalerieModale()
    // DisplayWorksModal()
-    DisplayCategoriesFilters(allCategories, allWorks);
     isConnected();
-    DisplayAddModale()
-    PrevisualisationImage()
-    DisplayCategoriesModale()
+    DisplayCategoriesFilters(allCategories, allWorks);
+    DisplayAddModale();
+    PrevisualisationImage();
+    DisplayCategoriesModale();
     AjoutProjet();
 
 }

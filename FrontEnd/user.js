@@ -1,4 +1,4 @@
-//  Une fois connecté 
+// Une fois connecté 
 
 function isConnected() {
     const loginLink = document.querySelector(".login_button");
@@ -64,7 +64,6 @@ async function login() {
 function disconnected() {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
-    window.href = "login.html"; // Redirigez l'utilisateur vers la page de connexion après la déconnexion
+    window.location.href = "login.html"; // Correctly redirect to the login page
 }
-
 

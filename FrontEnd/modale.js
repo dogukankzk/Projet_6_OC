@@ -16,7 +16,7 @@ xMark.addEventListener("click", () => {
     ContainerModale.style.display = "none";
 });
 
-// quitter la modale lors du clic en dehors de la modale
+//quitter la modale lors du clic en dehors de la modale
 ContainerModale.addEventListener("click", (e) => {
     console.log(e.target.className);
     if (e.target.className === "container_modale") {
@@ -37,11 +37,10 @@ async function DisplayGalerieModale() {
 
         trash.id = projet.id;
         // Ajouter un event listener sur trash
-        trash.addEventListener("click", async () => {
+        trash.addEventListener("click", () => {
             console.log("poubelle");
             // Appeler la fonction DeleteWorks avec l'ID du projet
-            await DeleteWorks(projet.id); // Passer l'ID du projet
-            await DisplayGalerieModale(); // Réafficher la galerie modale après suppression
+            DeleteWorks(projet.id); // Passer l'ID du projet
         });
 
         img.src = projet.imageUrl;
@@ -52,8 +51,9 @@ async function DisplayGalerieModale() {
     });
 }
 
+
 // Suppression d'une image dans la modale
-async function DeleteWorks(idProjet) {
+function DeleteWorks(idProjet) {
     const token = localStorage.getItem("token");
     console.log("Suppression du projet avec l'ID:", idProjet);
     
@@ -66,14 +66,13 @@ async function DeleteWorks(idProjet) {
     }
     
     // Effectuer la requête DELETE avec le token JWT inclus dans l'en-tête
-    try {
-        const response = await fetch(`http://localhost:5678/api/works/${idProjet}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        
+    fetch(`http://localhost:5678/api/works/${idProjet}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+    .then((response) => {
         if (!response.ok) {
             throw new Error("Échec de la suppression. Statut de la réponse: " + response.status);
         }
@@ -86,9 +85,8 @@ async function DeleteWorks(idProjet) {
                 elementASupprimer.parentNode.removeChild(elementASupprimer);
             }
         }
-    } catch (error) {
-        console.error("Erreur de suppression:", error);
-    }
+    })
+    .catch((error) => console.error("Erreur de suppression:", error));
 }
 
 // affichage de la modale de l'ajout des projets lors du click
@@ -126,6 +124,7 @@ function PrevisualisationImage(){
         if (file){
             const reader = new FileReader()
             reader.onload = function (e){
+                previewImg.src = e.target.result
                 previewImg.src = e.target.result
                 previewImg.style.display = "flex"
                 labelFile.style.display = "none"
@@ -169,28 +168,24 @@ async function AjoutProjet() {
         formData.append("image", add_input.files[0]); // inputFile est l'élément <input type="file">
 
         // Effectuer la requête POST avec le token JWT inclus dans l'en-tête
-        try {
-            const response = await fetch("http://localhost:5678/api/works", {
-                method: "POST",
-                body: formData,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
+        fetch("http://localhost:5678/api/works", {
+            method: "POST",
+            body: formData,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .then(response => {
             if (!response.ok) {
                 throw new Error("Erreur lors de l'envoi des données. Statut de la réponse: " + response.status);
             }
-
-            const data = await response.json();
+            return response.json();
+        })
+        .then(data => {
             console.log("Projet ajouté avec succès :", data);
-            await DisplayGalerieModale(); // Réafficher la galerie modale après ajout
+            DisplayGaleriesModale();
             DisplayWorks();
-        } catch (error) {
-            console.error("Erreur lors de l'ajout du projet :", error);
-        }
+        })
+        .catch(error => console.error("Erreur lors de l'ajout du projet :", error));
     });
 }
-
-// Appeler les fonctions initiales
-

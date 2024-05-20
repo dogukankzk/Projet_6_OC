@@ -87,6 +87,19 @@ h2{
 	font-size: 30px;
 	color: #1D6154
 }
+.lien_header{
+	cursor:pointer
+}
+
+.lien_header a {
+	text-decoration: none;
+	color: black;
+}
+
+.lien_header a:hover{
+	color: #B1663C;
+}
+
 nav ul {
 	display: flex;
 	align-items: center;
@@ -456,4 +469,8 @@ form label{
     border-radius: 20px;
     cursor: pointer;
     font-family: 'Syne';
+}
+
+#btnConnect{
+	cursor: pointer;
 }
