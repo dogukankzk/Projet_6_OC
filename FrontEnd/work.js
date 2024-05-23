@@ -1,8 +1,4 @@
 
-
-// Fonction principale
-
-
 // Récupérer les travaux de l'architecte
 async function GetWorks() {
     const response = await fetch('http://localhost:5678/api/works');
@@ -39,12 +35,20 @@ function DisplayCategoriesFilters(allCategories, allWorks) {
     const filterContainer = document.querySelector('.filter-container');
     const allButton = CreateFilterButton('TOUS', 'all');
     filterContainer.appendChild(allButton);
+    
     allCategories.forEach(category => {
         const button = CreateFilterButton(category.name.toUpperCase(), category.id);
         filterContainer.appendChild(button);
     });
+
+    // Ajouter le focus au bouton "TOUS" automatiquement
+    allButton.focus();
+
     // Après avoir créé les boutons de filtre, appelez la fonction FilterCategory()
     FilterCategory(allWorks);
+
+    // Afficher tous les travaux au chargement de la page
+    DisplayWorks(allWorks);
 }
 
 // Créer un bouton de filtre
@@ -61,9 +65,16 @@ function FilterCategory(allWorks) {
     const buttons = document.querySelectorAll(".filter-container .filter-btn");
     buttons.forEach(button => {
         button.addEventListener("click", (e) => {
+            // Supprimer le focus des autres boutons
+            buttons.forEach(btn => btn.blur());
+
+            // Ajouter le focus au bouton cliqué
+            e.target.focus();
+
             const btnId = e.target.dataset.categoryId;
             const filteredWorks = btnId === "all" ? allWorks : allWorks.filter(work => work.categoryId === parseInt(btnId));
             DisplayWorks(filteredWorks);
         });
     });
 }
+

@@ -49,6 +49,16 @@ async function loginUser(email, password) {
 }
 
 // Fonction de connexion
+// Sélection de l'élément pour afficher le message d'erreur
+const errorMessage = document.getElementById("errorMessage");
+
+// Fonction pour afficher le message d'erreur
+function displayErrorMessage(message) {
+    errorMessage.textContent = message;
+}
+
+
+
 async function login() {
     try {
         const user = await loginUser(emailInput.value, passwordInput.value);
@@ -57,7 +67,7 @@ async function login() {
         localStorage.setItem("userId", user.userId);
         window.location.replace("index.html");
     } catch (error) {
-        messageErreur.textContent = "Email ou mot de passe incorrect";
+        displayErrorMessage("Email ou mot de passe incorrect");
     }
 }
 

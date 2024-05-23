@@ -186,6 +186,7 @@ li:hover {
     padding: 0.6rem 0.8rem 0.6rem 0.8rem;
     font-size: 0.8rem;
     font-weight: 500;
+	outline: none;
     cursor: pointer;
 }
 
@@ -474,3 +475,4 @@ form label{
 #btnConnect{
 	cursor: pointer;
 }
+
