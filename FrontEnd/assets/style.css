@@ -476,3 +476,10 @@ form label{
 	cursor: pointer;
 }
 
+.succes{
+	font-weight: bold;
+	color: #1D6154;
+	text-align: center;
+	font-size: 15px;
+	margin-bottom: 4px;
+}

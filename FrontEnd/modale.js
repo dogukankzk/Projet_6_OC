@@ -52,6 +52,9 @@ async function DisplayGalerieModale() {
     }
 }
 
+
+
+
 // Suppression d'une image dans la modale
 async function DeleteWorks(idProjet) {
     const token = localStorage.getItem("token");
@@ -181,6 +184,11 @@ async function AjoutProjet() {
 
             const data = await response.json();
             console.log("Projet ajouté avec succès :", data);
+            const spanReponse = document.createElement("span");
+            spanReponse.innerHTML = "L'ajout du projet a été effectué.";
+            spanReponse.classList.add("succes")
+            form.insertBefore(spanReponse,form.firstChild);
+            
 
             // Ajouter le nouvel élément au DOM
             const newFigure = document.createElement("figure");

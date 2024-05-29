@@ -74,6 +74,6 @@ async function login() {
 function disconnected() {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
-    window.location.href = "login.html"; // Correctly redirect to the login page
+    window.location.href = "login.html"; // redirection vers la page d'acceuil
 }
 
